@@ -1,27 +1,19 @@
-"""
-    Message
-
-    Responsabilities:
-        - Create the message
-        - Add all the attachments
-        - Return the whole message as a string
-
-"""
 import os
+from smtplib import SMTP
 from email import encoders
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 
-def createMessage(msg):
+def createMessage(conf, attachments):
 
     message = MIMEMultipart()
 
-    message['From'] = msg['From']
-    message['To'] = msg['To']
-    message['Subject'] = msg['Subject']
+    message['From'] = conf['from']
+    message['To'] = conf['to']
+    message['Subject'] = conf['subject']
 
-    for attachment in msg['Attachments']:
+    for attachment in attachments:
         message.attach(buildAttachment(attachment))
 
     return message.as_string()
@@ -37,3 +29,10 @@ def buildAttachment(path):
     attachment.add_header('Content-Disposition', 'attachment', filename = name)
 
     return attachment
+
+def sendMail(conf, message):
+
+    with SMTP('smtp-mail.outlook.com', 587) as smtp:
+        print(smtp.starttls())
+        print(smtp.login(conf['from'], conf['pass']))
+        smtp.sendmail(conf['from'], conf['to'], message)
