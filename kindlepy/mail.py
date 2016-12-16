@@ -35,4 +35,5 @@ def sendMail(conf, message):
     with SMTP('smtp-mail.outlook.com', 587) as smtp:
         print(smtp.starttls())
         print(smtp.login(conf['from'], conf['pass']))
-        smtp.sendmail(conf['from'], conf['to'], message)
+
+        return smtp.sendmail(conf['from'], conf['to'], message)
