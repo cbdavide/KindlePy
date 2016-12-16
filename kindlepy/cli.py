@@ -18,20 +18,21 @@ from docopt import docopt
 from mail import sendMail, createMessage
 from getpass import getpass
 
-options = docopt(__doc__)
+def main():
+    options = docopt(__doc__)
 
-if 'send' in options:
+    if 'send' in options:
 
-  print('This guy knows what he\'s doing. I like that.')
+        print('This guy knows what he\'s doing. I like that.')
 
-  msg = {}
-  msg['from'] = util.inputmail('Input your email address: ')
-  msg['pass'] = getpass('Input your password: ')
-  msg['to'] = util.inputmail('Input your kindle address: ')
-  msg['subject'] = 'Book'
+        msg = {}
+        msg['from'] = util.inputmail('Input your email address: ')
+        msg['pass'] = getpass('Input your password: ')
+        msg['to'] = util.inputmail('Input your kindle address: ')
+        msg['subject'] = 'Book'
 
-  attachments = [os.path.join('.', filename) for filename in options['<file>']]
+        attachments = [os.path.join('.', filename) for filename in options['<file>']]
 
-  envelope = createMessage(msg, attachments)
+        envelope = createMessage(msg, attachments)
 
-  print(sendMail(msg, envelope))
+        print(sendMail(msg, envelope))
