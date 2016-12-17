@@ -13,9 +13,9 @@
 
 """
 import os
-import util
+from . import util
 from docopt import docopt
-from mail import sendMail, createMessage
+from . import mail
 from getpass import getpass
 
 def main():
@@ -33,6 +33,6 @@ def main():
 
         attachments = [os.path.join('.', filename) for filename in options['<file>']]
 
-        envelope = createMessage(msg, attachments)
+        envelope = mail.createMessage(msg, attachments)
 
-        print(sendMail(msg, envelope))
+        print(mail.sendMail(msg, envelope))
