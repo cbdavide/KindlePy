@@ -2,6 +2,7 @@ import os
 import re
 from smtplib import SMTP
 from smtplib import SMTP_SSL
+from smtplib import SMTPServerDisconnected
 from email import encoders
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -68,25 +69,30 @@ def findSMTPServer(emailDomain):
         if emailDomain in service['domains']:
             return service['smtp'], service['port'], service['secure']
 
-    return None, None
+    return None, None, None
 
 def getDomain(emailAddress):
     return re.search(r'@(\w+)', emailAddress).groups()[0]
 
 def sendMail(conf, message):
     host, port, secure = findSMTPServer(getDomain(conf['from']))
+    result = {}
 
-    # TODO: Raise an exception.
     if not host:
-        return 'Error'
+        raise Exception('Not supported SMTP service.')
 
     if secure:
-        with SMTP_SSL(host, port) as smtp:
-            print(smtp.login(conf['from'], conf['pass']))
-            return smtp.sendmail(conf['from'], conf['to'], message)
+        smtp = SMTP_SSL(host, port)
     else:
-        with SMTP(host, port) as smtp:
-            print(smtp.starttls())
-            print(smtp.login(conf['from'], conf['pass']))
+        smtp = SMTP(host, port)
+        print(smtp.starttls())
 
-            return smtp.sendmail(conf['from'], conf['to'], message)
+    try:
+        smtp.login(conf['from'], conf['pass'])
+        result = smtp.sendmail(conf['from'], conf['to'], message)
+    except SMTPServerDisconnected:
+        raise Exception('Sorry we could\'t connect to the server, you should check your credendials...')
+    finally:
+        smtp.close()
+
+    return result == {}
