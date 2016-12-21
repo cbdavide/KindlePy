@@ -25,10 +25,3 @@ def set(kind, email):
         writeConfig(conf)
     else:
         raise Exception('It seems that the email does not have a valid syntax.')
-
-if __name__ == '__main__':
-    print(readConfig())
-    # set('sender', 'new55sender@gmail.com')
-    # print(readConfig())
-    set('receiver', 'newrec33eiver')
-    print(readConfig())
