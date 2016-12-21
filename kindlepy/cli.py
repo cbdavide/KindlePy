@@ -4,35 +4,75 @@
 
   Usage:
     kindlepy send <file>...
+    kindlepy config --sender <sender_email>
+    kindlepy config --receiver <receiver_email>
+    kindlepy config --sender <sender_email> --receiver <receiver_email>
     kindlepy -h | --help
-    kindlepy -v |   --version
+    kindlepy -v | --version
 
   Options:
+    --sender      Set the sender's email
+    --receiver    Set the receiver's email
     -h --help     Show this screen.
     --version     Show version.
 
 """
 import os
-from . import util
+import sys
 from docopt import docopt
-from . import mail
 from getpass import getpass
+from src import mail, config, util
 
 def main():
     options = docopt(__doc__)
 
-    if 'send' in options:
-
-        print('This guy knows what he\'s doing. I like that.')
-
+    if options['send']:
         msg = {}
-        msg['from'] = util.inputmail('Input your email address: ')
-        msg['pass'] = getpass('Input your password: ')
-        msg['to'] = util.inputmail('Input your kindle address: ')
+        conf = config.readConfig()
+
+        if 'sender' in conf:
+            msg['from'] = conf['sender']
+        else:
+            msg['from'] = util.inputmail('Input the sender email address: ')
+
+        msg['pass'] = getpass('Input the sender email password: ')
+
+        if 'receiver' in conf:
+            msg['to'] = conf['receiver']
+        else:
+            msg['to'] = util.inputmail('Input the receiver email address: ')
+            
         msg['subject'] = 'Book'
 
         attachments = [os.path.join('.', filename) for filename in options['<file>']]
 
         envelope = mail.createMessage(msg, attachments)
 
-        print(mail.sendMail(msg, envelope))
+        try:
+            if mail.sendMail(msg, envelope):
+                print('The documents were successfully sent.')
+        except Exception as err:
+            print(err)
+
+        sys.exit(0)
+
+    if options['config']:
+        if options['<sender_email>']:
+            setField('sender', options['<sender_email>'])
+        if options['<receiver_email>']:
+            setField('receiver', options['<receiver_email>'])
+
+        sys.exit(0)
+
+def setField(kind, email):
+    '''
+        Auxiliary function to deal with exceptions in a cleaner way.
+    '''
+    try:
+        config.set(kind, email)
+    except Exception as err:
+        print(err)
+        sys.exit(1)
+
+if __name__ == '__main__':
+    main()
