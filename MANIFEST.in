@@ -3,3 +3,4 @@ exclude script.sh
 include setup.cfg
 prune dist
 prune .git
+recursive-exclude *.egg-info *
