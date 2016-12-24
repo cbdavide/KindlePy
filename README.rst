@@ -4,6 +4,10 @@ KindlePy
 
 CLI to send files to your kindle email address, or any other email address.
 
+Install:
+---------
+    pip install kindlepy
+
 Config:
 --------
 Set the sender email:

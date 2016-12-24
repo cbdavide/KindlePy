@@ -1,6 +1,6 @@
 exclude .gitignore
-exclude script.sh
 include setup.cfg
+include README.rst
 prune dist
 prune .git
 recursive-exclude *.egg-info *

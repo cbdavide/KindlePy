@@ -1,9 +1,16 @@
 from setuptools import setup, find_packages
+from os.path import abspath, dirname, join
+from codecs import open
+
+this_dir = abspath(dirname(__file__))
+with open(join(this_dir, 'README.rst'), encoding='utf-8') as file:
+    long_description = file.read()
 
 setup(
     name = 'kindlepy',
     version = '1.0.0',
     description = 'CLI tool for mailing your documents to your kindle device.',
+    long_description = long_description,
     url = 'https://github.com/cbdavide/KindlePy',
     author = 'David Castelblanco Benavides',
     author_email = 'cbdavides@gmail.com',
@@ -12,7 +19,7 @@ setup(
     packages = find_packages(),
     install_requires = ['docopt', 'validate_email'],
     classifiers = [
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
